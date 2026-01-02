@@ -16,7 +16,7 @@ class TaskadeClient:
     def __init__(self):
         settings = get_settings()
         self.workspace_id = settings.taskade_workspace_id
-        self.project_entities = settings.taskade_project_entities
+        self.project_entities = settings.entity_project_id
         self.base_url = settings.taskade_base_url
         self._client: Optional[httpx.AsyncClient] = None
 
@@ -43,24 +43,14 @@ class TaskadeClient:
     # ==================== Task Operations ====================
 
     async def get_tasks(self, project_id: str) -> list[dict[str, Any]]:
-        """Get all tasks in a project, including nested children."""
+        """Get all top-level tasks in a project (no nested children)."""
         client = await self._get_client()
         response = await client.get(f"/projects/{project_id}/tasks")
         response.raise_for_status()
         
-        all_tasks = response.json().get("items", [])
-        
-        # Flatten nested tasks - extract children recursively
-        def extract_all_tasks(tasks: list[dict]) -> list[dict]:
-            result = []
-            for task in tasks:
-                result.append(task)
-                # If task has children, recursively extract them
-                if "tasks" in task and task["tasks"]:
-                    result.extend(extract_all_tasks(task["tasks"]))
-            return result
-        
-        return extract_all_tasks(all_tasks)
+        # Return only top-level items (matches Jupyter notebook pattern)
+        # This prevents fetching fields for headers, notes, and nested bullets
+        return response.json().get("items", [])
 
     async def get_task(self, project_id: str, task_id: str) -> dict[str, Any]:
         """Get a specific task."""
@@ -124,8 +114,8 @@ class TaskadeClient:
         async def fetch_field(field_id: str) -> tuple[str, Any, str | None]:
             async with semaphore:
                 try:
-                    # Add small delay to avoid rate limiting
-                    await asyncio.sleep(0.05)  # 50ms delay between requests
+                    # Add delay to avoid rate limiting (150ms between requests)
+                    await asyncio.sleep(0.15)  # Increased from 0.05 to 0.15
                     result = await self.get_task_field(project_id, task_id, field_id)
                     return (field_id, result.get("item", {}).get("value"), None)
                 except Exception as e:
@@ -163,7 +153,7 @@ class TaskadeClient:
         self,
         project_id: str,
         field_ids: list[str],
-        max_concurrent: int = 10  # Reduced from 20 to 10 for rate limiting
+        max_concurrent: int = 3  # Reduced from 10 to 3 for rate limiting
     ) -> list[dict[str, Any]]:
         """Fetch all tasks with their field values using fan-out pattern with rate limiting."""
         semaphore = asyncio.Semaphore(max_concurrent)

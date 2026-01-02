@@ -90,6 +90,23 @@ class EntitySummary(BaseModel):
     status: str = "Unknown"
     jurisdiction: str = "Unknown"
     formation_date: Optional[str] = None
+    filing_id: Optional[str] = None
+    ein: Optional[str] = None
+    legal_address: Optional[str] = None
+    legal_city: Optional[str] = None
+    legal_state: Optional[str] = None
+    legal_zip: Optional[str] = None
+    mailing_address: Optional[str] = None
+    mailing_city: Optional[str] = None
+    mailing_state: Optional[str] = None
+    mailing_zip: Optional[str] = None
+    renewal_frequency: Optional[str] = None
+    next_renewal_cost: Optional[str] = None
+    parent_entity: Optional[str] = None
+    registered_agent_id: Optional[str] = None
+    notes: Optional[str] = None
+    created_by: Optional[str] = None
+    modified_by: Optional[str] = None
     taskade_task_id: str
 
 

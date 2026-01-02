@@ -295,6 +295,23 @@ class EntityService:
                     status=mapped.get("status", "Unknown"),
                     jurisdiction=mapped.get("jurisdiction", "Unknown"),
                     formation_date=mapped.get("formation_date"),
+                    filing_id=mapped.get("filing_id"),
+                    ein=mapped.get("ein"),
+                    legal_address=mapped.get("legal_address"),
+                    legal_city=mapped.get("legal_city"),
+                    legal_state=mapped.get("legal_state"),
+                    legal_zip=mapped.get("legal_zip"),
+                    mailing_address=mapped.get("mailing_address"),
+                    mailing_city=mapped.get("mailing_city"),
+                    mailing_state=mapped.get("mailing_state"),
+                    mailing_zip=mapped.get("mailing_zip"),
+                    renewal_frequency=mapped.get("renewal_frequency"),
+                    next_renewal_cost=mapped.get("next_renewal_cost"),
+                    parent_entity=mapped.get("parent_entity"),
+                    registered_agent_id=mapped.get("registered_agent_id"),
+                    notes=mapped.get("notes"),
+                    created_by=mapped.get("created_by"),
+                    modified_by=mapped.get("modified_by"),
                     taskade_task_id=item.get("task_id", "")
                 )
                 entities.append(entity)

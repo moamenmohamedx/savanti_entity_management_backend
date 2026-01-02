@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     # Taskade
     taskade_api_token: SecretStr
     taskade_workspace_id: str
-    taskade_project_entities: str
+    entity_project_id: str
     taskade_base_url: str = "https://www.taskade.com/api/v1"
 
     # OpenRouter
